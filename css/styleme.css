@@ -1,0 +1,23 @@
+html,
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.7em;
+}
+
+a {
+  text-decoration: none;
+}
+
+.container {
+  margin: auto;
+  max-width: 800px;
+  overflow: auto;
+  background-color: rgb(238, 217, 185);
+  padding: 10px 30px;
+  /* border: 1px solid black; */
+}
+
+h1 {
+  text-align: center;
+  color: blue;
+}
