@@ -27,35 +27,35 @@ printFibo(6, 0, 1); // Output: "0, 1, 1, 2, 3, 5"
 let user = { name: "John", years: 30 };
 let { name, years: age, isAdmin = false } = user;
 
-// alert(name); // John
-// alert(age); // 30
-// alert(isAdmin); // false
+alert(name); // John
+alert(age); // 30
+alert(isAdmin); // false
 
-// // Assignment 3.
-// // a) addBook
-// function addBook(title, author, ID) {
-//   if (!libraryBooks.some((book) => book.ID === ID)) {
-//     const newBook = { title, author, ID };
-//     libraryBooks.push(newBook);
-//     return newBook;
-//   }
-//   return null;
-// }
-// console.log(addBook("New Book", "New Author", 1234));
+// Assignment 3.
+// a) addBook
+function addBook(title, author, ID) {
+  if (!libraryBooks.some((book) => book.ID === ID)) {
+    const newBook = { title, author, ID };
+    libraryBooks.push(newBook);
+    return newBook;
+  }
+  return null;
+}
+console.log(addBook("New Book", "New Author", 1234));
 
-// // b) getTitles
-// function getTitles() {
-//   return libraryBooks.map((book) => book.title).sort();
-// }
-// console.log(getTitles());
+// b) getTitles
+function getTitles() {
+  return libraryBooks.map((book) => book.title).sort();
+}
+console.log(getTitles());
 
-// // c) findBooks
-// function findBooks(keyword) {
-//   return libraryBooks
-//     .filter((book) => book.title.toLowerCase().includes(keyword.toLowerCase()))
-//     .sort((a, b) => a.ID - b.ID);
-// }
-// console.log(findBooks("Road"));
+// c) findBooks
+function findBooks(keyword) {
+  return libraryBooks
+    .filter((book) => book.title.toLowerCase().includes(keyword.toLowerCase()))
+    .sort((a, b) => a.ID - b.ID);
+}
+console.log(findBooks("Road"));
 
 // Assignment 4.
 // Test code

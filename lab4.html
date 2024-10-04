@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 4</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        background-color: #f4f4f4;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        width: 100%;
+        margin: auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      h2,
+      h3 {
+        color: #333;
+      }
+      pre {
+        background-color: #f8f8f8;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      .answer-label {
+        font-weight: bold;
+        color: #0056b3;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Lab 4</h1>
+
+      <h2>1. What will be printed by the following code snippets in strict mode (answer without running it)?</h2>
+      <h2>2. Draw the lexical environment diagram for each code snippet.</h2>
+      <p>Note: You may list it instead of drawing. Here are some examples:</p>
+
+      <pre>
+1. Global EC creation:
+Outer: null, LE: [{ .... }], TDZ{...}
+2. Global EC execution:
+Outer: null, LE: [{ .... }], TDZ{...}
+3. Function EC creation:
+Outer: ..., LE: [{ .... }], TDZ{...}
+4. Function EC execution:
+Outer: ..., LE: [{ .... }], TDZ{...}
+      </pre>
+
+      <div class="answer-label">Code 1:</div>
+      <pre>
+let x;
+var a = 5;
+var b = 10;
+var c = function(a, b, c) {
+    document.write(x);
+    document.write(a);
+    var f = function(a, b, c) {
+        b = a;
+        document.write(b);
+        b = c;
+        var x = 5;
+    }
+    f(a, b, c);
+    document.write(b);
+    var x = 10;
+}
+c(8, 9, 10);
+document.write(b);
+document.write(x);
+      </pre>
+      <div class="answer-label">1. Output:</div>
+      <pre>
+Output: undefined, 8, 8, 9, 10, undefined.
+
+1. undefined - x is declared but not initialized (hoisted with "undefined").
+2. 8 - The value of "a" inside the function "c" is 8.
+3. 8 - Inside function "f", "b" is assigned the value of "a", which is 8.
+4. 9 - After the function call "f", the value of "b" remains 9 since only a local copy of "b" was modified.
+5. 10 - The value of the global variable "b" is 10.
+6. undefined - The variable "x" is declared using "let", but not initialized.
+      </pre>
+
+      <div class="answer-label">2. Lexical Environment Diagram:</div>
+      <pre>
+1. Global EC creation:
+   - Outer: null
+   - LE: [{ a: undefined, b: undefined, c: undefined }]
+   - TDZ: { x }
+
+2. Global EC Execution:
+   - Outer: null
+   - LE: [{ x: undefined, a: 5, b: 10, c: Function }]
+   - TDZ: {}
+
+3. c FEC Creation:
+   - Outer: Global LE
+   - LE: [{ a: 8, b: 9, c: 10, f: undefined, x: TDZ }]
+   - TDZ: { x }
+
+4. c FEC Execution:
+   - Outer: Global LE
+   - LE: [{ a: 8, b: 9, c: 10, f: Function, x: 10 }]
+   - TDZ: {}
+   
+5. f FEC Creation:
+   - Outer: c LE
+   - LE: [{ a: 8, b: 9, c: 10, x: undefined }]
+   - TDZ: { x }
+
+6. f FEC Execution:
+   - Outer: c LE
+   - LE: [{ a: 8, b: 10, c: 10, x: 5 }]
+   - TDZ: {}
+      </pre>
+
+      <div class="answer-label">Code 2:</div>
+      <pre>
+var x = 9;
+function myFunction() {
+    return x * x;
+}
+document.write(myFunction());
+x = 5;
+document.write(myFunction());
+      </pre>
+      <div class="answer-label">1. Output:</div>
+      <pre>
+Output: 81, 25.
+
+1. 81 - "x" is initially 9, so myFunction() returns 9 * 9 = 81.
+2. 25 - "x" is reassigned to 5, so myFunction() returns 5 * 5 = 25.
+      </pre>
+
+      <div class="answer-label">2. Lexical Environment Diagram:</div>
+      <pre>
+1. Global EC Creation:
+   - Outer: null
+   - LE: [{ x: undefined, myFunction: undefined }]
+   - TDZ: {}
+
+2. Global EC Execution:
+   - Outer: null
+   - LE: [{ x: 9, myFunction: Function }]
+   - TDZ: {}
+
+3. myFunction FEC Creation (First Call):
+   - Outer: Global LE
+   - LE: [{}]
+   - TDZ: {}
+
+4. myFunction FEC Execution (First Call):
+   - Outer: Global LE
+   - LE: [{}]
+   - TDZ: {}
+
+5. Global EC Execution (After Reassignment):
+   - Outer: null
+   - LE: [{ x: 5, myFunction: Function }]
+   - TDZ: {}
+
+6. myFunction FEC Creation (Second Call):
+   - Outer: Global LE
+   - LE: [{}]
+   - TDZ: {}
+
+7. myFunction FEC Execution (Second Call):
+   - Outer: Global LE
+   - LE: [{}]
+   - TDZ: {}
+      </pre>
+
+      <div class="answer-label">Code 3:</div>
+      <pre>
+var foo = 1;
+function bar() {
+    if (!foo) {
+        var foo = 10;
+    }
+    alert(foo);
+}
+bar();
+      </pre>
+      <div class="answer-label">1. Output:</div>
+      <pre>
+Output: 10.
+
+Due to variable hoisting, "var foo" inside the function is hoisted, but not assigned.
+So "foo" is "undefined" when checked in the "if" condition. Then "foo" is assigned the value of 10.
+      </pre>
+
+      <div class="answer-label">2. Lexical Environment Diagram:</div>
+      <pre>
+1. Global EC Creation:
+   - Outer: null
+   - LE: [{ foo: undefined, bar: undefined }]
+   - TDZ: {}
+
+2. Global EC Execution:
+   - Outer: null
+   - LE: [{ foo: 1, bar: Function }]
+   - TDZ: {}
+
+3. bar FEC Creation:
+   - Outer: Global LE
+   - LE: [{ foo: undefined }]
+   - TDZ: {}
+
+4. bar FEC Execution:
+   - Outer: Global LE
+   - LE: [{ foo: 10 }]
+   - TDZ: {}
+        </pre
+      >
+    </div>
+  </body>
+</html>
