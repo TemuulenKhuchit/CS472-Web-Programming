@@ -140,7 +140,8 @@ class Quiz {
     }
 
     getAverageScore() {
-        const totalScore = this.students.reduce((sum, student) => sum + this.scoreStudentBySid(student.studentId), 0);
+        const totalScore = this.students.reduce(
+            (sum, student) => sum + this.scoreStudentBySid(student.studentId), 0);
         return totalScore / this.students.length;
     }
 }
