@@ -20,19 +20,19 @@ const getNewArray = function (arr) {
   outer: null, this: Window
   LE[{ a: 2, outer: fn, b: 3 }], tdz{ }
 
-3. outer EC creation:
+3. outer FEC creation:
   outer: global, this: undefined
   LE[{ d: undefined }], tdz { c }
 
-4. outer EC execution:
+4. outer FEC execution:
   outer: global, this: undefined
   LE[{ d: 7, c: 5, inner: fn }], tdz{ }
 
-5. inner EC creation:
+5. inner FEC creation:
   outer: outer, this: undefined
   LE[{ }], tdz { c }, closure(outer):{d:7}
 
-6. inner EC execution:
+6. inner FEC execution:
   outer: outer, this: undefined
   LE[{ c: 9 }], tdz{ }, closure(outer):{d:7}
 
@@ -76,10 +76,287 @@ const employees = [
   { name: "Eve", salary: 95000, department: "HR", teams: ["recruitment"] },
 ];
 
-const result = employees
-  .filter((e) => e.teams.includes("engineering"))
-  .reduce((acc, e) => {
-    acc[e.department] = (acc[e.department] || 0) + e.salary;
-    return acc;
-  }, {});
-console.log(result);
+// const result = employees
+//   .filter((e) => e.teams.includes("engineering"))
+//   .reduce((acc, e) => {
+//     acc[e.department] = (acc[e.department] || 0) + e.salary;
+//     return acc;
+//   }, {});
+// console.log(result);
+
+/*
+function loginUser(username, password) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const isValid = username === "user" && password === "password";
+      if (isValid) {
+        resolve({ token: "12345", message: "Login successful!" });
+      } else {
+        reject({ error: "Invalid credentials", statusCode: 401 });
+      }
+    }, 1000);
+  });
+}
+
+function fetchUserProfile(token) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (token === "12345") {
+        resolve({ name: "John Doe", email: "john@example.com" });
+      } else {
+        reject({ error: "Invalid token", statusCode: 403 });
+      }
+    }, 1000);
+  });
+}
+
+loginUser("user", "password")
+  .then((res) => {
+    console.log(res.message);
+    return fetchUserProfile(res.token);
+  })
+  .then((profile) => console.log(`Profile Name - ${profile.name}, Email - ${profile.email}`))
+  .catch((err) => console.error(`Error: ${err.error} (Status Code: ${err.statusCode})`));
+
+(async () => {
+  try {
+    let res = await loginUser("user", "password");
+    console.log(res.message);
+    let profile = await fetchUserProfile(res.token);
+    console.log(`Profile Name - ${profile.name}, Email - ${profile.email}`);
+  } catch (err) {
+    console.error(`Error: ${err.error} (Status Code: ${err.statusCode})`);
+  }
+})();
+*/
+
+/*
+function registerUser(username, email) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (username && email) {
+        resolve({ id: "user123", message: "Registration successful!" });
+      } else {
+        reject({ error: "Missing username or email", statusCode: 400 });
+      }
+    }, 1000);
+  });
+}
+
+function sendWelcomeEmail(userId) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (userId) {
+        resolve({ message: "Welcome email sent to user!" });
+      } else {
+        reject({ error: "User ID not provided", statusCode: 500 });
+      }
+    }, 1000);
+  });
+}
+
+registerUser("johnDoe", "john@example.com")
+  .then((res) => {
+    console.log(res.message);
+    return sendWelcomeEmail(res.id);
+  })
+  .then((res) => console.log(res.message))
+  .catch((err) => console.error(`Error: ${err.error} (Status Code: ${err.statusCode})`))
+  .finally(() => console.log("Operation complete."));
+
+(async () => {
+  try {
+    let res = await registerUser("johnDoe", "john@example.com");
+    console.log(res.message);
+    res = await sendWelcomeEmail(res.id);
+    console.log(res.message);
+  } catch (err) {
+    console.error(`Error: ${err.error} (Status Code: ${err.statusCode})`);
+  } finally {
+    console.log("Operation complete.");
+  }
+})();
+*/
+
+/*
+function registerUser(username, email) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (username && email) {
+        resolve({ userId: "user123", message: "User registered successfully!" });
+      } else {
+        reject({ error: "Missing username or email", statusCode: 400 });
+      }
+    }, 1000);
+  });
+}
+
+function createUserProfile(userId, bio) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (userId && bio) {
+        resolve({ profileId: "profile456", message: "Profile created successfully!" });
+      } else {
+        reject({ error: "Missing userId or bio", statusCode: 400 });
+      }
+    }, 1000);
+  });
+}
+
+function sendConfirmationEmail(userId) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (userId) {
+        resolve({ message: "Confirmation email sent successfully!" });
+      } else {
+        reject({ error: "User ID not found", statusCode: 500 });
+      }
+    }, 1000);
+  });
+}
+
+registerUser("johnDoe", "john@example.com")
+  .then((res) => {
+    const userId = res.userId;
+    console.log(res.message);
+
+    return Promise.all([createUserProfile(userId, "This is my bio"), sendConfirmationEmail(userId)]);
+  })
+  .then((results) => {
+    const [profileRes, emailRes] = results;
+    console.log(profileRes.message);
+    console.log(emailRes.message);
+  })
+  .catch((err) => {
+    console.error(`Error: ${err.error} (Status Code: ${err.statusCode})`);
+  })
+  .finally(() => {
+    console.log("All operations complete.");
+  });
+
+(async () => {
+  try {
+    let res = await registerUser("johnDoe", "john@example.com");
+    const userId = res.userId;
+    console.log(res.message);
+    let results = [await createUserProfile(userId, "This is my bio"), await sendConfirmationEmail(userId)];
+    const [profileRes, emailRes] = results;
+    console.log(profileRes.message);
+    console.log(emailRes.message);
+  } catch (err) {
+    console.error(`Error: ${err.error} (Status Code: ${err.statusCode})`);
+  } finally {
+    console.log("All operations complete.");
+  }
+})();
+*/
+
+/*
+1. Global EC Creation:
+  outer: null, this: window
+  LE[{Employee: fn}], tdz{person, Manager, manager}
+
+2. Global EC Execution:
+  outer: null, this: window
+  LE[{Employee: fn, person: Obj, Manager: fn, manager: Obj}], tdz{}
+
+3. new Manager FEC Creation:
+  outer: global, this: {}
+  LE[{f: "Anna Smith", s: 95000, b: 500}], tdz{}
+
+4. new Manager FEC Execution:
+  outer: global, this: {}
+  LE[{f: "Anna Smith", s: 95000, b: 500}, tdz{}
+
+5. super FEC Creation:
+  outer: global, this: {}
+  LE[{f: "Anna Smith", s: 95000}], tdz{}
+
+6. super FEC Execution:
+  outer: global, this: {}
+  LE[{f: "Anna Smith", s: 95000}], tdz{}
+
+7. toString FEC Creation:
+  outer: global, this: manager
+  LE[{}], tdz{}
+
+8. toString FEC Execution:
+  outer: global, this: manager
+  LE[{}], tdz{}
+*/
+
+let person = {
+  toString: function () {
+    return this.fullname;
+  },
+};
+function Employee(f, s) {
+  this.fullname = f;
+  this.salary = s;
+}
+Object.setPrototypeOf(Employee.prototype, person);
+class Manager extends Employee {
+  constructor(f, s, b) {
+    super(f, s);
+    this.bonus = b;
+  }
+}
+let manager = new Manager("Anna Smith", 95000, 500);
+// console.log(manager.toString());
+
+function Vehicle(make, model, year, mileage) {
+  this.make = make;
+  this.model = model;
+  this.year = year;
+  this.mileage = mileage;
+}
+
+Vehicle.prototype.drive = function (distance) {
+  this.mileage += distance;
+};
+
+Vehicle.prototype.toString = function () {
+  return `${this.year} ${this.make} ${this.model} (${this.mileage} miles)`;
+};
+
+Object.setPrototypeOf(Car, Vehicle);
+Object.setPrototypeOf(Car.prototype, Vehicle.prototype);
+
+function Car(make, model, year, mileage, numDoors, speed, topSpeed) {
+  Vehicle.call(this, make, model, year, mileage);
+  this.numDoors = numDoors;
+  this.speed = speed;
+  this.topSpeed = topSpeed;
+}
+
+Car.prototype.accelerate = function () {
+  this.speed += 10;
+};
+
+Car.prototype.brake = function () {
+  this.speed -= 10;
+};
+
+Car.prototype.toString = function () {
+  return Vehicle.prototype.toString.call(this) + ` ${this.numDoors} ${this.topSpeed}`;
+};
+
+let c1 = new Car("Toyoto", "Accord", 2023, 9000, 4, 0, 115);
+c1.drive(500);
+c1.accelerate();
+console.log(c1.toString());
+c1.brake();
+console.log(c1.toString());
+
+let group = {
+  title: "Our Group",
+  students: ["John", "Pete", "Alice"],
+  showList: function () {
+    this.students.forEach(
+      function (student) {
+        console.log(this.title + ": " + student);
+      }.bind(this)
+    );
+  },
+};
+group.showList();
