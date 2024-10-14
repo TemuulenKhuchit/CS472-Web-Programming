@@ -13,48 +13,77 @@
       <h2>Topic: Express</h2>
 
       <h3>Exercise 1:</h3>
-      <p>Implement the code for Meditation class so that it can be used as shown below:</p>
+      <p>Convert the Lab09 Question2 to the Express application.</p>
       <div class="answer-label">Code:</div>
       <pre class="code-block">
-const Meditation = class {
-  constructor(seconds) {
-    this.seconds = seconds;
-  }
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const app = express();
 
-  start() {
-    console.log('Start meditation');
-    let interval = setInterval(() => {
-      console.log(this.seconds);
-      this.seconds--;
-      if (this.seconds === 0) {
-        clearInterval(interval);
-        console.log('Jay Guru Dev');
-      }
-    }, 1000);
-  }
-};
+// Route to serve the image
+app.get('/image', (req, res) => {
+  const imagePath = path.join(__dirname, 'path-to-image.jpg');
+  res.setHeader('Content-Type', 'image/jpeg');
+  const readStream = fs.createReadStream(imagePath);
+  readStream.pipe(res);
+});
 
-// Usage example:
-const morning_meditation = new Meditation(5);
-morning_meditation.start();
-console.log('Start meditation');
-      </pre>
-      <div class="answer-label">Output:</div>
-      <pre class="code-block">
-// Start meditation
-// 5
-// 4
-// 3
-// 2
-// 1
-// Jay Guru Dev
+// Route to serve the PDF
+app.get('/pdf', (req, res) => {
+  const pdfPath = path.join(__dirname, 'path-to-pdf.pdf');
+  res.setHeader('Content-Type', 'application/pdf');
+  const readStream = fs.createReadStream(pdfPath);
+  readStream.pipe(res);
+});
+
+// Route to serve the text file
+app.get('/about', (req, res) => {
+  const textPath = path.join(__dirname, 'path-to-about.txt');
+  res.setHeader('Content-Type', 'text/plain');
+  const readStream = fs.createReadStream(textPath);
+  readStream.pipe(res);
+});
+
+// Route to serve home
+app.get(['/home', '/'], (req, res) => {
+  res.send('Welcome to my website');
+});
+
+// Catch all other routes and return a 404
+app.use((req, res) => {
+  res.status(404).send('404 Not Found');
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
       </pre>
 
       <h3>Exercise 2:</h3>
-      <p>Change isPrime function below to run asynchronously using Promise:</p>
+      <p>Write an Express application to provide a calculator API.</p>
       <ul>
-        <li>If the input is prime number, the promise resolves with { prime: true }.</li>
-        <li>If the input is not a prime number, it rejects with { prime: false }</li>
+        <li>
+          There should be an API endpoint for each basic math operation: addition, subtraction, multiplication,
+          division, and modulus.
+        </li>
+        <li>
+          Each endpoint will receive the input numbers and return a JSON response with the results as follows: {
+          results: 0 }.
+        </li>
+        <li>
+          The calculator router should be designed with flexibility to receive the input numbers as query parameters,
+          parameters, or in the body as JSON or urlEncoded format, For example, all these requests will return the same
+          results value { results: 5 }:
+          <ul>
+            <li>GET /addition/2/3</li>
+            <li>GET /addition/?a=2&b=3</li>
+            <li>POST /addition/ BODY ?a=2&b=3</li>
+            <li>POST /addition/ BODY {a:2,b:3}</li>
+          </ul>
+        </li>
       </ul>
       <div class="answer-label">Code:</div>
       <pre class="code-block">
