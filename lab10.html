@@ -16,46 +16,45 @@
       <p>Convert the Lab09 Question2 to the Express application.</p>
       <div class="answer-label">Code:</div>
       <pre class="code-block">
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+import express from "express";
+import { createReadStream } from "fs";
+import { join } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 const app = express();
 
-// Route to serve the image
-app.get('/image', (req, res) => {
-  const imagePath = path.join(__dirname, 'path-to-image.jpg');
-  res.setHeader('Content-Type', 'image/jpeg');
-  const readStream = fs.createReadStream(imagePath);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+app.get("/image", (req, res) => {
+  const imagePath = join(__dirname, "../src/happy.jpg");
+  res.setHeader("Content-Type", "image/jpeg");
+  const readStream = createReadStream(imagePath);
   readStream.pipe(res);
 });
 
-// Route to serve the PDF
-app.get('/pdf', (req, res) => {
-  const pdfPath = path.join(__dirname, 'path-to-pdf.pdf');
-  res.setHeader('Content-Type', 'application/pdf');
-  const readStream = fs.createReadStream(pdfPath);
+app.get("/pdf", (req, res) => {
+  const pdfPath = join(__dirname, "../src/lab10.pdf");
+  res.setHeader("Content-Type", "application/pdf");
+  const readStream = createReadStream(pdfPath);
   readStream.pipe(res);
 });
 
-// Route to serve the text file
-app.get('/about', (req, res) => {
-  const textPath = path.join(__dirname, 'path-to-about.txt');
-  res.setHeader('Content-Type', 'text/plain');
-  const readStream = fs.createReadStream(textPath);
+app.get("/about", (req, res) => {
+  const textPath = join(__dirname, "../src/JustText.txt");
+  res.setHeader("Content-Type", "text/plain");
+  const readStream = createReadStream(textPath);
   readStream.pipe(res);
 });
 
-// Route to serve home
-app.get(['/home', '/'], (req, res) => {
-  res.send('Welcome to my website');
+app.get(["/home", "/"], (req, res) => {
+  res.send("Welcome to my website");
 });
 
-// Catch all other routes and return a 404
 app.use((req, res) => {
-  res.status(404).send('404 Not Found');
+  res.status(404).send("404 Not Found");
 });
 
-// Start the server
 const port = 3000;
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -85,6 +84,87 @@ app.listen(port, () => {
           </ul>
         </li>
       </ul>
+      <div class="answer-label">Code:</div>
+      <pre class="code-block">
+import express from "express";
+import pkg from "body-parser";
+const { json, urlencoded } = pkg;
+
+const app = express();
+app.use(json()); // For parsing application/json
+app.use(urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+
+const getNumbers = (req) => {
+  let a = parseFloat(req.params.a || req.query.a || req.body.a);
+  let b = parseFloat(req.params.b || req.query.b || req.body.b);
+  return { a, b };
+};
+
+app.get("/addition/:a?/:b?", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a + b });
+});
+
+app.post("/addition", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a + b });
+});
+
+app.get("/subtraction/:a?/:b?", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a - b });
+});
+
+app.post("/subtraction", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a - b });
+});
+
+app.get("/multiplication/:a?/:b?", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a * b });
+});
+
+app.post("/multiplication", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a * b });
+});
+
+app.get("/division/:a?/:b?", (req, res) => {
+  const { a, b } = getNumbers(req);
+  if (b === 0) {
+    res.status(400).json({ error: "Division by zero is not allowed" });
+  } else {
+    res.json({ results: a / b });
+  }
+});
+
+app.post("/division", (req, res) => {
+  const { a, b } = getNumbers(req);
+  if (b === 0) {
+    res.status(400).json({ error: "Division by zero is not allowed" });
+  } else {
+    res.json({ results: a / b });
+  }
+});
+
+// Modulus
+app.get("/modulus/:a?/:b?", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a % b });
+});
+
+app.post("/modulus", (req, res) => {
+  const { a, b } = getNumbers(req);
+  res.json({ results: a % b });
+});
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Calculator API running at http://localhost:${port}`);
+});
+      </pre>
     </div>
   </body>
 </html>
