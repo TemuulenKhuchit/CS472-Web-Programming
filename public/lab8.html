@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab 8</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Lab 8</h1>
+
+      <h2>Topic: Node Event Loop</h2>
+
+      <h3>Question 1:</h3>
+      <p>What is LibUV?</p>
+      <div class="answer-label">Answer:</div>
+      <pre class="code-block">
+LibUV is a multi-platform support library that Node.js uses to handle asynchronous events. 
+It provides an event-driven, non-blocking architecture that supports I/O operations. 
+For example file system handling, networking, and timers.
+      </pre>
+
+      <h3>Question 2:</h3>
+      <p>Explain the difference between <strong>setImmediate(f)</strong> and <strong>setTimeout(f, Time)</strong>?</p>
+      <div class="answer-label">Answer:</div>
+      <pre class="code-block">
+setImmediate(f) schedules the callback function to be executed in the check phase 
+of the event loop, immediately after IO events. It runs after the current operation 
+completes but before timers like setTimeout.
+
+setTimeout(f, 0) schedules the function to run after the specified delay. 
+But it goes into the timers queue, which runs after all 
+other tasks in the current event loop are finished.
+      </pre>
+
+      <h3>Question 3:</h3>
+      <p>Explain the difference between <strong>process.nextTick(f)</strong> and <strong>setImmediate(f)</strong>?</p>
+      <div class="answer-label">Answer:</div>
+      <pre class="code-block">
+process.nextTick(f) schedules the callback function to run immediately after the 
+current operation finishes but before IO tasks or any other timers. It has the highest 
+priority in the event loop's microtask queue.
+
+setImmediate(f) schedules the function to run after the 
+IO events, in the check phase of the event loop, making it lower in priority 
+than process.nextTick(f).
+      </pre>
+
+      <h2>Code Output Prediction</h2>
+      <h3>Question 4:</h3>
+      <p>Pls write down the output without executing the following code snippets and check it with result.</p>
+
+      <div class="answer-label">Code:</div>
+      <pre class="code-block">
+const fs = require('fs');
+
+// Create read stream and immediately close it
+const rd = fs.createReadStream('input.txt');
+rd.close();
+
+// Listen to 'close' event
+rd.on('close', () => console.log('readableStream close event'));
+
+// Read file asynchronously
+fs.readFile('input.txt', 'utf-8', (error, data) => {
+  if (error) console.log(error);
+  else console.log(data);
+});
+
+// Timers and Immediate calls
+setTimeout(() => console.log("this is setTimeout"), 5000);
+setTimeout(() => console.log("this is setTimeout"), 0);
+
+setImmediate(() => console.log("this is setImmediate 1"));
+setImmediate(() => {
+  console.log("this is setImmediate 2");
+  Promise.resolve().then(() => console.log("Promise.resolve inside setImmediate"));
+});
+
+Promise.resolve().then(() => console.log("Promise.resolve 1"));
+Promise.resolve().then(() => {
+  console.log("Promise.resolve 2");
+  process.nextTick(() => console.log("nextTick inside Promise"));
+});
+
+process.nextTick(() => console.log("nextTick 1"));
+      </pre>
+
+      <div class="answer-label">Output:</div>
+      <pre class="code-block">
+nextTick 1
+Promise.resolve 1
+Promise.resolve 2
+nextTick inside Promise
+readableStream close event
+this is setTimeout (0ms)
+this is setImmediate 1
+this is setImmediate 2
+Promise.resolve inside setImmediate
+(File contents or error from fs.readFile)
+this is setTimeout (5000ms)
+      </pre>
+    </div>
+  </body>
+</html>
