@@ -21,8 +21,140 @@
         <li>Place routes in the appropriate order.</li>
         <li>Use Postman to test your REST APIs (all endpoints).</li>
       </ol>
-      <div class="answer-label">Code:</div>
-      <pre class="code-block"></pre>
+      <div class="answer-label">lab11.js code:</div>
+      <pre class="code-block">
+import express, { json } from "express";
+import cors from "cors";
+import studentRoutes from "../routes/studentRoute.js";
+
+const app = express();
+
+app.use(cors());
+app.use(json());
+
+app.use("/students", studentRoutes);
+
+app.use((req, res, next) => res.status(404).json({ error: req.url + " API not supported!" }));
+
+app.listen(3000, () => console.log("Server is running on port 3000"));        
+      </pre>
+      <div class="answer-label">studentRoute.js code:</div>
+      <pre class="code-block">
+import { Router } from "express";
+import sc from "../controllers/studentController.js";
+
+const router = Router();
+
+router.get("/", sc.getAllStudents);
+router.post("/", sc.createStudent);
+router.get("/:id", sc.getStudentById);
+router.put("/:id", sc.updateStudent);
+router.delete("/:id", sc.deleteStudent);
+
+export default router;        
+      </pre>
+      <div class="answer-label">studentController.js code:</div>
+      <pre class="code-block">
+import Student from "../models/studentModel.js";
+
+const controller = {
+  getAllStudents: function (req, res, next) {
+    let students = Student.fetchAll();
+
+    if (req.query.name) {
+      students = students.filter((student) => student.name.includes(req.query.name));
+    }
+    if (req.query.sortBy) {
+      const sortKey = req.query.sortBy;
+      students.sort((a, b) => (a[sortKey] > b[sortKey] ? 1 : -1));
+    }
+
+    res.status(200).json(students);
+  },
+
+  getStudentById: function (req, res, next) {
+    const student = Student.findById(req.params.id);
+    if (student) {
+      res.status(200).json(student);
+    } else {
+      res.status(404).json({ message: "Student not found" });
+    }
+  },
+
+  createStudent: function (req, res, next) {
+    const { name, age, grade } = req.body;
+    const newStudent = new Student(null, name, age, grade).save();
+    res.status(201).json(newStudent);
+  },
+
+  updateStudent: function (req, res, next) {
+    try {
+      const updatedStudent = Student.updateById(req.params.id, req.body);
+      res.status(200).json(updatedStudent);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  },
+
+  deleteStudent: function (req, res, next) {
+    try {
+      Student.deleteById(req.params.id);
+      res.status(200).end();
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  },
+};
+
+export default controller;        
+      </pre>
+      <div class="answer-label">studentModel.js code:</div>
+      <pre class="code-block">
+let students = [];
+
+class Student {
+  constructor(id, name, age, grade) {
+    this.id = id;
+    this.name = name;
+    this.age = age;
+    this.grade = grade;
+  }
+
+  save() {
+    this.id = Math.random().toString(36).substring(2, 9);
+    students.push(this);
+    return this;
+  }
+
+  static fetchAll() {
+    return students;
+  }
+
+  static findById(studentId) {
+    return students.find((student) => student.id === studentId);
+  }
+
+  static updateById(studentId, updatedData) {
+    const index = students.findIndex((student) => student.id === studentId);
+    if (index > -1) {
+      students[index] = { ...students[index], ...updatedData };
+      return students[index];
+    }
+    throw new Error("Student not found");
+  }
+
+  static deleteById(studentId) {
+    const index = students.findIndex((student) => student.id === studentId);
+    if (index > -1) {
+      students.splice(index, 1);
+      return;
+    }
+    throw new Error("Student not found");
+  }
+}
+
+export default Student;        
+      </pre>
     </div>
   </body>
 </html>
