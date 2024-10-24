@@ -1,51 +1,48 @@
-"use strict";
-
 // Question 1.
-import express from "express";
-import { createReadStream } from "fs";
-import { join } from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const app = express();
+// import express from "express";
+// import { createReadStream } from "fs";
+// import { join } from "path";
+// import { fileURLToPath } from "url";
+// import { dirname } from "path";
+// const app = express();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
-app.get("/image", (req, res) => {
-  const imagePath = join(__dirname, "../src/happy.jpg");
-  res.setHeader("Content-Type", "image/jpeg");
-  const readStream = createReadStream(imagePath);
-  readStream.pipe(res);
-});
+// app.get("/image", (req, res) => {
+//   const imagePath = join(__dirname, "../src/happy.jpg");
+//   res.setHeader("Content-Type", "image/jpeg");
+//   const readStream = createReadStream(imagePath);
+//   readStream.pipe(res);
+// });
 
-app.get("/pdf", (req, res) => {
-  const pdfPath = join(__dirname, "../src/lab10.pdf");
-  res.setHeader("Content-Type", "application/pdf");
-  const readStream = createReadStream(pdfPath);
-  readStream.pipe(res);
-});
+// app.get("/pdf", (req, res) => {
+//   const pdfPath = join(__dirname, "../src/lab10.pdf");
+//   res.setHeader("Content-Type", "application/pdf");
+//   const readStream = createReadStream(pdfPath);
+//   readStream.pipe(res);
+// });
 
-app.get("/about", (req, res) => {
-  const textPath = join(__dirname, "../src/JustText.txt");
-  res.setHeader("Content-Type", "text/plain");
-  const readStream = createReadStream(textPath);
-  readStream.pipe(res);
-});
+// app.get("/about", (req, res) => {
+//   const textPath = join(__dirname, "../src/JustText.txt");
+//   res.setHeader("Content-Type", "text/plain");
+//   const readStream = createReadStream(textPath);
+//   readStream.pipe(res);
+// });
 
-app.get(["/home", "/"], (req, res) => {
-  res.send("Welcome to my website");
-});
+// app.get(["/home", "/"], (req, res) => {
+//   res.send("Welcome to my website");
+// });
 
-app.use((req, res) => {
-  res.status(404).send("404 Not Found");
-});
+// app.use((req, res) => {
+//   res.status(404).send("404 Not Found");
+// });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+// const port = 3000;
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
 
-/*
 // Question 2.
 import express from "express";
 import pkg from "body-parser";
@@ -125,4 +122,3 @@ const port = 3000;
 app.listen(port, () => {
   console.log(`Calculator API running at http://localhost:${port}`);
 });
-*/
